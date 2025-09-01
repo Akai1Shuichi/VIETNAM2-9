@@ -6,10 +6,25 @@ let waveSpeed = Number(speedRange.value);
 let offset = 0;
 
 function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  // Sử dụng window.innerWidth/innerHeight thay vì getBoundingClientRect
+  const dpr = window.devicePixelRatio || 1;
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+
+  canvas.width = width * dpr;
+  canvas.height = height * dpr;
+
+  canvas.style.width = width + "px";
+  canvas.style.height = height + "px";
+
+  ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform trước khi scale
+  ctx.scale(dpr, dpr);
 }
+
 window.addEventListener("resize", resizeCanvas);
+window.addEventListener("orientationchange", () => {
+  setTimeout(resizeCanvas, 100);
+});
 resizeCanvas();
 
 speedRange.addEventListener("input", () => {
@@ -17,58 +32,69 @@ speedRange.addEventListener("input", () => {
 });
 
 const flagImg = new Image();
+flagImg.crossOrigin = "anonymous"; // Thêm để tránh lỗi CORS
 flagImg.src = "https://flagcdn.com/w320/vn.png";
 
 function drawWavingFlag(img, offset) {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  ctx.clearRect(0, 0, width, height);
 
   // Calculate flag size to fill canvas and keep aspect ratio
   const aspect = img.width / img.height;
-  let flagWidth = canvas.width;
-  let flagHeight = canvas.height;
-  if (canvas.width / canvas.height > aspect) {
-    flagHeight = canvas.height;
+  let flagWidth = width;
+  let flagHeight = height;
+
+  if (width / height > aspect) {
+    flagHeight = height;
     flagWidth = flagHeight * aspect;
   } else {
-    flagWidth = canvas.width;
+    flagWidth = width;
     flagHeight = flagWidth / aspect;
   }
-  const xStart = (canvas.width - flagWidth) / 2;
-  const yStart = (canvas.height - flagHeight) / 2;
 
-  const waveAmplitude = Math.max(20, flagHeight * 0.06);
-  const waveLength = Math.max(80, flagWidth * 0.18);
+  const xStart = (width - flagWidth) / 2;
+  const yStart = (height - flagHeight) / 2;
 
-  // Smoother waving: more slices, use cosine for trailing edge
-  const slices = Math.max(120, Math.floor(flagWidth / 6));
+  const waveAmplitude = Math.max(15, flagHeight * 0.04);
+  const waveLength = Math.max(60, flagWidth * 0.15);
+
+  // Tăng số lượng slices và cải thiện thuật toán để tránh gaps
+  const slices = Math.max(150, Math.floor(flagWidth / 4));
   const sliceWidth = flagWidth / slices;
+
   for (let i = 0; i < slices; i++) {
     const sx = i * sliceWidth;
-    const sw = sliceWidth;
-    const sh = img.height;
+    const sw = sliceWidth + 1; // Thêm 1px để tránh gaps
     const dx = xStart + sx;
-    // Use both sine and cosine for smoother trailing
+
+    // Cải thiện wave calculation
     const phase = sx / waveLength + offset;
     const dy =
       yStart +
       Math.sin(phase) * waveAmplitude +
-      Math.cos(phase * 0.7) * (waveAmplitude * 0.3);
-    ctx.drawImage(
-      img,
-      sx * (img.width / flagWidth),
-      0,
-      sw * (img.width / flagWidth),
-      img.height,
-      dx,
-      dy,
-      sliceWidth,
-      flagHeight
-    );
+      Math.cos(phase * 0.8) * (waveAmplitude * 0.25);
+
+    // Đảm bảo không vẽ ra ngoài boundaries
+    const actualSw = Math.min(sw, flagWidth - sx);
+    if (actualSw > 0) {
+      ctx.drawImage(
+        img,
+        (sx / flagWidth) * img.width,
+        0,
+        (actualSw / flagWidth) * img.width,
+        img.height,
+        dx,
+        dy,
+        actualSw,
+        flagHeight
+      );
+    }
   }
 }
 
 function animate() {
-  offset += 0.02 * waveSpeed;
+  offset += 0.015 * waveSpeed;
   drawWavingFlag(flagImg, offset);
   requestAnimationFrame(animate);
 }
@@ -76,6 +102,11 @@ function animate() {
 flagImg.onload = () => {
   animate();
 };
+
+// Thêm event listener để resize khi orientation thay đổi
+window.addEventListener("orientationchange", () => {
+  setTimeout(resizeCanvas, 100);
+});
 
 const playMusicBtn = document.getElementById("playMusicBtn");
 const prevMusicBtn = document.getElementById("prevMusicBtn");
@@ -92,9 +123,11 @@ function getMusicOptions() {
     text: opt.text,
   }));
 }
+
 function getCurrentMusicIndex() {
   return musicSelect.selectedIndex;
 }
+
 function setMusicIndex(idx, autoPlay = true) {
   const options = getMusicOptions();
   if (idx < 0) idx = options.length - 1;
@@ -160,7 +193,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
 const settingsToggle = document.getElementById("settingsToggle");
 const settingsPanel = document.getElementById("settingsPanel");
-const settingsArrow = document.getElementById("settingsArrow");
 
 let panelOpen = true;
 settingsToggle.addEventListener("click", () => {
@@ -168,10 +200,8 @@ settingsToggle.addEventListener("click", () => {
   if (panelOpen) {
     settingsPanel.classList.remove("hide");
     settingsToggle.classList.add("open");
-    settingsArrow.innerHTML = "&#9660;"; // down
   } else {
     settingsPanel.classList.add("hide");
     settingsToggle.classList.remove("open");
-    settingsArrow.innerHTML = "&#9650;"; // up
   }
 });
