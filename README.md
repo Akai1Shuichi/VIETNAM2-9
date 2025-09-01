@@ -1,28 +1,38 @@
 # 🇻🇳 Flag Animation Web App
 
-Ứng dụng web hiển thị lá cờ Việt Nam bay phấp phới, phủ toàn màn hình, với hiệu ứng uốn lượn mượt mà. Bạn có thể tùy chỉnh tốc độ uốn lượn bằng thanh trượt bên phải.
+Ứng dụng web hiển thị lá cờ Việt Nam bay phấp phới, phủ toàn màn hình, với hiệu ứng uốn lượn mượt mà. Có thể tùy chỉnh tốc độ uốn lượn và phát nhạc nền.
 
 ## 🚀 Hướng dẫn sử dụng
 
 1. Mở file `index.html` bằng trình duyệt bất kỳ.
 2. Lá cờ sẽ tự động phủ toàn màn hình và bay phấp phới.
 3. Sử dụng thanh trượt **Tốc độ uốn lượn** để điều chỉnh tốc độ chuyển động của lá cờ.
+4. Chọn nhạc từ danh sách, phát/tạm dừng hoặc chuyển bài bằng các nút điều khiển.
 
-## ⚙️ Tuỳ chỉnh
+## 🎵 Thay đổi nhạc
 
-- Đường dẫn hình ảnh lá cờ: sử dụng [https://flagcdn.com/w320/vn.png](https://flagcdn.com/w320/vn.png).
-- Thay đổi hiệu ứng hoặc hình ảnh lá cờ trong file `script.js` nếu muốn cá nhân hóa thêm.
+- Để thay đổi danh sách nhạc, hãy chỉnh sửa các thẻ `<option>` trong phần `<select id="musicSelect">` của file `index.html`.
+- Đường dẫn nhạc có thể là link trực tuyến hoặc file local (nên đặt trong thư mục `assets`).
+- Nếu dùng file local, hãy đảm bảo file nhạc đã được copy vào thư mục `assets` của dự án.
 
-## 💡 Ghi chú
+**Ví dụ:**
 
-- Ứng dụng tự động điều chỉnh kích thước lá cờ theo cửa sổ trình duyệt.
-- Hiệu ứng uốn lượn được tối ưu để mượt mà và tự nhiên.
+```html
+<select id="musicSelect">
+  <option value="assets/song1.mp3">Tên bài hát 1</option>
+  <option value="https://example.com/song2.mp3">Tên bài hát 2</option>
+</select>
+```
 
-## 📁 Cấu trúc file
+## 🌐 Deploy web
 
-- `index.html` – Giao diện chính.
-- `style.css` – Định dạng bố cục và giao diện.
-- `script.js` – Xử lý hiệu ứng lá cờ và điều chỉnh tốc độ.
+Bạn có thể deploy web bằng các dịch vụ như:
+
+- GitHub Pages
+- [Netlify](https://www.netlify.com)
+- [Vercel](https://vercel.com)
+- [Render](https://render.com/)
 
 ---
-"# VIETNAM2-9" 
+
+# VIETNAM2-9
