@@ -76,3 +76,67 @@ function animate() {
 flagImg.onload = () => {
   animate();
 };
+
+const playMusicBtn = document.getElementById("playMusicBtn");
+const flagAudio = document.getElementById("flagAudio");
+const musicSelect = document.getElementById("musicSelect");
+
+let isPlaying = false;
+
+musicSelect.addEventListener("change", () => {
+  flagAudio.src = musicSelect.value;
+  flagAudio.pause();
+  flagAudio.currentTime = 0;
+  playMusicBtn.textContent = "Phát nhạc";
+  isPlaying = false;
+});
+
+playMusicBtn.addEventListener("click", () => {
+  if (isPlaying) {
+    flagAudio.pause();
+    playMusicBtn.textContent = "Phát nhạc";
+  } else {
+    flagAudio.play();
+    playMusicBtn.textContent = "Tạm dừng nhạc";
+  }
+  isPlaying = !isPlaying;
+});
+
+flagAudio.addEventListener("ended", () => {
+  isPlaying = false;
+  playMusicBtn.textContent = "Phát nhạc";
+});
+
+// Tự động phát nhạc đầu tiên khi load trang
+window.addEventListener("DOMContentLoaded", () => {
+  flagAudio.src = musicSelect.value;
+  // Tự động phát nếu được phép (nhiều trình duyệt sẽ chặn tự động phát)
+  flagAudio
+    .play()
+    .then(() => {
+      playMusicBtn.textContent = "Tạm dừng nhạc";
+      isPlaying = true;
+    })
+    .catch(() => {
+      playMusicBtn.textContent = "Phát nhạc";
+      isPlaying = false;
+    });
+});
+
+const settingsToggle = document.getElementById("settingsToggle");
+const settingsPanel = document.getElementById("settingsPanel");
+const settingsArrow = document.getElementById("settingsArrow");
+
+let panelOpen = true;
+settingsToggle.addEventListener("click", () => {
+  panelOpen = !panelOpen;
+  if (panelOpen) {
+    settingsPanel.classList.remove("hide");
+    settingsToggle.classList.add("open");
+    settingsArrow.innerHTML = "&#9660;"; // down
+  } else {
+    settingsPanel.classList.add("hide");
+    settingsToggle.classList.remove("open");
+    settingsArrow.innerHTML = "&#9650;"; // up
+  }
+});

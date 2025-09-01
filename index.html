@@ -6,11 +6,37 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="container">
-      <canvas id="flagCanvas" width="600" height="300"></canvas>
-      <div class="controls">
+    <canvas id="flagCanvas"></canvas>
+    <button id="settingsToggle" class="settings-toggle" aria-label="Cài đặt">
+      <span class="settings-icon">&#9881;</span>
+      <span class="settings-title">Cài đặt</span>
+      <!-- <span id="settingsArrow" class="settings-arrow">&#9660;</span> -->
+    </button>
+    <div class="controls settings-panel" id="settingsPanel">
+      <div class="controls-item">
         <label for="speedRange">Tốc độ uốn lượn:</label>
-        <input type="range" id="speedRange" min="1" max="10" value="5" />
+        <input type="range" id="speedRange" min="1" max="30" value="5" />
+      </div>
+      <div class="controls-item">
+        <label for="musicSelect">Chọn nhạc:</label>
+        <select id="musicSelect">
+          <option value="./assets/viettiepcauchuyenhoabinh.mp3">
+            Viết Tiếp Câu Chuyện Hòa Bình
+          </option>
+          <option value="./assets/vietnamtrongtoila.mp3">
+            VIỆT NAM TRONG TÔI LÀ
+          </option>
+          <option value="./assets/vietnamoi.mp3">Việt Nam Ơi</option>
+        </select>
+      </div>
+      <div class="controls-item">
+        <button id="playMusicBtn">Phát nhạc</button>
+      </div>
+      <div class="controls-item">
+        <audio
+          id="flagAudio"
+          src="./assets/viettiepcauchuyenhoabinh.mp3"
+        ></audio>
       </div>
     </div>
     <script src="script.js"></script>
