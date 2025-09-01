@@ -151,6 +151,28 @@ button#playMusicBtn {
 button#playMusicBtn:hover {
   background: #b71c1c;
 }
+.music-controls {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+#prevMusicBtn,
+#nextMusicBtn {
+  padding: 7px 10px;
+  font-size: 1rem;
+  background: #e0e0e0;
+  color: #c62828;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+#prevMusicBtn:hover,
+#nextMusicBtn:hover {
+  background: #ffcdd2;
+}
 audio {
   width: 100%;
   margin-top: 2px;

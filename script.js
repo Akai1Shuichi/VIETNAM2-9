@@ -78,17 +78,62 @@ flagImg.onload = () => {
 };
 
 const playMusicBtn = document.getElementById("playMusicBtn");
+const prevMusicBtn = document.getElementById("prevMusicBtn");
+const nextMusicBtn = document.getElementById("nextMusicBtn");
 const flagAudio = document.getElementById("flagAudio");
 const musicSelect = document.getElementById("musicSelect");
 
 let isPlaying = false;
 
-musicSelect.addEventListener("change", () => {
-  flagAudio.src = musicSelect.value;
+// Lấy danh sách các bài nhạc từ select
+function getMusicOptions() {
+  return Array.from(musicSelect.options).map((opt) => ({
+    value: opt.value,
+    text: opt.text,
+  }));
+}
+function getCurrentMusicIndex() {
+  return musicSelect.selectedIndex;
+}
+function setMusicIndex(idx, autoPlay = true) {
+  const options = getMusicOptions();
+  if (idx < 0) idx = options.length - 1;
+  if (idx >= options.length) idx = 0;
+  musicSelect.selectedIndex = idx;
+  flagAudio.src = options[idx].value;
   flagAudio.pause();
   flagAudio.currentTime = 0;
   playMusicBtn.textContent = "Phát nhạc";
   isPlaying = false;
+  if (autoPlay) {
+    flagAudio
+      .play()
+      .then(() => {
+        playMusicBtn.textContent = "Tạm dừng nhạc";
+        isPlaying = true;
+      })
+      .catch(() => {
+        playMusicBtn.textContent = "Phát nhạc";
+        isPlaying = false;
+      });
+  }
+}
+
+// Sự kiện chuyển bài trước
+prevMusicBtn.addEventListener("click", () => {
+  let idx = getCurrentMusicIndex();
+  setMusicIndex(idx - 1, true);
+});
+
+// Sự kiện chuyển bài tiếp
+nextMusicBtn.addEventListener("click", () => {
+  let idx = getCurrentMusicIndex();
+  setMusicIndex(idx + 1, true);
+});
+
+// Khi chọn bài từ select, tự động phát
+musicSelect.addEventListener("change", () => {
+  setMusicIndex(getCurrentMusicIndex(), true);
 });
 
 playMusicBtn.addEventListener("click", () => {
@@ -102,25 +147,15 @@ playMusicBtn.addEventListener("click", () => {
   isPlaying = !isPlaying;
 });
 
+// Khi hết bài, tự động phát bài tiếp theo, lặp lại danh sách
 flagAudio.addEventListener("ended", () => {
-  isPlaying = false;
-  playMusicBtn.textContent = "Phát nhạc";
+  let idx = getCurrentMusicIndex();
+  setMusicIndex(idx + 1, true);
 });
 
 // Tự động phát nhạc đầu tiên khi load trang
 window.addEventListener("DOMContentLoaded", () => {
-  flagAudio.src = musicSelect.value;
-  // Tự động phát nếu được phép (nhiều trình duyệt sẽ chặn tự động phát)
-  flagAudio
-    .play()
-    .then(() => {
-      playMusicBtn.textContent = "Tạm dừng nhạc";
-      isPlaying = true;
-    })
-    .catch(() => {
-      playMusicBtn.textContent = "Phát nhạc";
-      isPlaying = false;
-    });
+  setMusicIndex(0, true);
 });
 
 const settingsToggle = document.getElementById("settingsToggle");
